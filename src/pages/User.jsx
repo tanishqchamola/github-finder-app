@@ -4,17 +4,22 @@ import { useParams, Link } from "react-router-dom";
 import Spinner from "../components/layout/Spinner";
 import RepoList from "../components/repos/RepoList";
 import GithubContext from "../context/github/GithubContext";
+import { getUserAndRepos } from "../context/github/GithubActions";
 
 const User = () => {
-	const { getSingleUser, singleUser, isLoading, getUserRepos, repos } = useContext(GithubContext);
+	const { singleUser, isLoading, repos, dispatch } = useContext(GithubContext);
 
 	const params = useParams();
 
 	useEffect(() => {
-		getSingleUser(params.login);
-		getUserRepos(params.login);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []); // [] - run only once
+		dispatch({ type: "SET_LOADING" });
+		const getUserData = async () => {
+			const userDataAndRepos = await getUserAndRepos(params.login);
+			dispatch({ type: "GET_USER_AND_REPOS", payload: userDataAndRepos });
+		};
+
+		getUserData();
+	}, [dispatch, params.login]);
 
 	const { name, type, avatar_url, location, bio, blog, twitter_username, login, html_url, followers, following, public_repos, public_gists, hireable } = singleUser;
 
