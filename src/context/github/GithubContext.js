@@ -17,19 +17,43 @@ export const GithubProvider = ({ children }) => {
 	// dispatch is used to send an action to the reducer
 	const [state, dispatch] = useReducer(githubReducer, initialState);
 
-	const fetchUser = async () => {
+	// to fetch initial users (testing purpose only)
+	// const fetchUser = async () => {
+	// 	setLoading();
+	// 	const response = await fetch(`${GITHUB_URL}/users`, {
+	// 		headers: {
+	// 			Authorization: `token ${GITHUB_PAT}`,
+	// 		},
+	// 	});
+	// 	const data = await response.json();
+
+	// 	// sending action to reducer
+	// 	dispatch({
+	// 		type: "GET_USERS",
+	// 		payload: data,
+	// 	});
+	// };
+
+	// Get search results
+	const searchUsers = async (text) => {
 		setLoading();
-		const response = await fetch(`${GITHUB_URL}/users`, {
+		const response = await fetch(`${GITHUB_URL}/search/users?q=${text}`, {
 			headers: {
 				Authorization: `token ${GITHUB_PAT}`,
 			},
 		});
-		const data = await response.json();
+		const { items } = await response.json();
 
 		// sending action to reducer
 		dispatch({
 			type: "GET_USERS",
-			payload: data,
+			payload: items,
+		});
+	};
+
+	const clearUsers = () => {
+		dispatch({
+			type: "CLEAR_USERS",
 		});
 	};
 
@@ -44,7 +68,8 @@ export const GithubProvider = ({ children }) => {
 			value={{
 				users: state.users,
 				isLoading: state.isLoading,
-				fetchUser,
+				searchUsers,
+				clearUsers,
 			}}
 		>
 			{children}

@@ -13,6 +13,12 @@ const githubReducer = (state, action) => {
 				isLoading: false,
 			};
 
+		case "CLEAR_USERS":
+			return {
+				...state,
+				users: [],
+			};
+
 		case "SET_LOADING":
 			return {
 				...state,
